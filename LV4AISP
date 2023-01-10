@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+
+struct cvor_ {
+   char x;
+   struct cvor_ *lijevi;
+   struct cvor_ *desni;
+};
+
+typedef struct cvor_ cvor;
+cvor *korijen = NULL;
+int nadjen = -1;
+cvor *nadredjeni = NULL;
+
+void Nadji(char p, cvor *c ) {
+
+  if (c==NULL) return;
+  if (c->x==p) {
+    nadjen = 1;
+    return;
+  }
+
+  nadredjeni = c;
+  if ( c->x > p ) Nadji( p, c->lijevi );
+  else Nadji( p, c->desni );
+}
+
+ 
+
+void Dodaj( char p, cvor *c ) {
+  cvor *n;
+  nadjen = -1;
+  nadredjeni = NULL;
+  Nadji( p, c );
+  if (nadjen==1) return;
+  n = (cvor *)malloc( sizeof(cvor) ); // new cvor;
+  n->x = p;
+  n->lijevi = n->desni = NULL;
+  if (nadredjeni==NULL) korijen = n;
+  else
+    if (p<nadredjeni->x) nadredjeni->lijevi = n;
+    else nadredjeni->desni = n;
+
+}
+
+void NLD( cvor *c ) {
+  printf( "%c ", c->x );
+  if (c->lijevi!=NULL) NLD( c->lijevi );
+  if (c->desni!=NULL) NLD( c->desni );
+ 
+}
+
+void LDN( cvor *c ) {
+  if (c->lijevi!=NULL) LDN( c->lijevi );
+  if (c->desni!=NULL) LDN( c->desni );
+  printf("%c ", c->x );
+}
+
+void LND( cvor *c ) {
+  if (c->lijevi!=NULL) LND( c->lijevi );
+  printf( "%c ", c->x );
+  if (c->desni!=NULL) LND( c->desni );
+}
+
+
+
+int main()
+
+{
+
+  int i;
+  char x;
+    for (i=0; i<22; i++){
+        scanf("%c",&x);
+        Dodaj( x, korijen );
+    }
+    printf("\n");
+    printf("\nLND:\n");
+    LND(korijen);
+    printf("\n");
+    printf("\nNLD:\n");
+    NLD(korijen);
+    printf("\n");
+    printf("\nLDN:\n");
+    LDN(korijen);
+    return 0;
+
+}
