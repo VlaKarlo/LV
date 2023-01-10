@@ -1,0 +1,283 @@
+1. Koristeći POSIX Threads biblioteku kreirajte program koji kreira i pokreće 3 neovisne
+niti: jednu nit za ispis najvećeg elementa polja, drugu za ispis najmanjeg elementa polja
+i treću za ispis aritmetičke sredine elemenata polja. Polje inicijalizirajte kao globalnu
+varijablu.
+
+#include<stdlib.h>
+#include<stdio.h>
+#include<pthread.h>
+
+void *calcMin(void *ptr);
+void *calcMax(void *ptr);
+void *calcAvg(void *ptr);
+
+int array[] = {1,2,3,4,0,5,9,6,7,8};
+int M = 10;
+
+int main(){
+    pthread_t thread1, thread2, thread3;
+    int array[] = {1,2,3,4,0,5,9,6,7,8};
+    int ret1, ret2, ret3;
+
+    ret1 = pthread_create (&thread1, NULL, calcMin, (void*) array);
+    ret2 = pthread_create (&thread2, NULL, calcMax, (void*) array);
+    ret3 = pthread_create (&thread3, NULL, calcAvg, (void*) array);
+
+    pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
+    pthread_join(thread3, NULL);
+    printf("Thread 1 vraca: %d\n",ret1);
+    printf("Thread 2 vraca: %d\n",ret2);
+    printf("Thread 3 vraca: %d\n",ret3);
+    exit(0);
+}
+void *calcMin(void *ptr){
+    int min = array[0];
+    int i;
+    for(i = 1; i < M; i++){
+        if (array[i] < min) min = array[i];
+    }
+    printf("Min number: %d\n",min);
+}
+void *calcMax(void *ptr){
+    int max = array[0];
+    int i ;
+    for(i = 1; i < M; i++){
+        if (array[i] > max) max = array[i];
+    }
+    printf("Max number: %d\n",max);
+}
+void *calcAvg(void *ptr){
+    int sum = 0;
+    int i;
+    for(i = 0; i < M; i++){
+        sum = sum + array[i];
+    }
+    printf("Average: %f\n",(float)sum / M);
+}
+
+2. Koristeći POSIX Threads biblioteku napravite program koji kreira i pokreće dvije niti:
+prva funkcija neprestano kvadrira sve elemente nekog polja, dok druga nit neprestano
+korjenuje sve elemente nekog polja. Obje niti ispisuju polje nakon izvođenja operacije
+kvadriranja, odnosno korjenovanja te odlaze na spavanje jednu sekundu (sleep(1)).
+Polje inicijalizirajte kao globalnu varijablu.
+
+#include<stdlib.h>
+#include<stdio.h>
+#include<pthread.h>
+#include<math.h>
+#include<unistd.h>
+
+void *Square(void *ptr);
+void *Root(void *ptr);
+
+int array[] = {1,2,3,4,0,5,9,6,7,8};
+int M = 10;
+
+int main(){
+    pthread_t thread1, thread2;
+    
+    int ret1, ret2;
+
+    ret1 = pthread_create (&thread1, NULL, Square, (void*) array);
+    ret2 = pthread_create (&thread2, NULL, Root, (void*) array);
+    
+
+    pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
+    printf("Thread 1 vraca: %d\n",ret1);
+    printf("Thread 2 vraca: %d\n",ret2);
+    exit(0);
+}
+
+void *Square(void *ptr){
+    int i;
+    while(1){
+		printf("\n");
+        for(i = 0; i < M; i++){
+            array[i] = array[i] * array[i];   
+        }
+        for(i = 0; i < M; i++){
+            printf("%d ", array[i]);
+        }
+        sleep(1);
+    }
+    
+    
+}
+void *Root(void *ptr){
+    int i;
+    while(1){
+		printf("\n");
+        for(i = 0; i < M; i++){
+            array[i] = sqrt(array[i]);   
+        }
+        for(i = 0; i < M; i++){
+            printf("%d ", array[i]);
+        }
+        sleep(1);
+    }  
+}
+
+3. Program iz zadataka 2 nadopunite tako da implementirate međusobno isključivanje
+dviju niti pomoću Dekkerova algoritma.
+
+#include<stdlib.h>
+#include<stdio.h>
+#include<pthread.h>
+#include<math.h>
+#include<unistd.h>
+#include<stdbool.h>
+
+void *Square(void *ptr);
+void *Root(void *ptr);
+
+int array[] = {1,2,3,4,0,5,9,6,7,8};
+int M = 10;
+bool flags[2];
+bool turn = 0;
+
+int main(){
+    pthread_t thread1, thread2;
+    
+    int ret1, ret2;
+
+    ret1 = pthread_create (&thread1, NULL, Square, (void*) array);
+    ret2 = pthread_create (&thread2, NULL, Root, (void*) array);
+    
+
+    pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
+    printf("Thread 1 vraca: %d\n",ret1);
+    printf("Thread 2 vraca: %d\n",ret2);
+    exit(0);
+}
+
+void enter_critical_section (bool i) { 
+    bool j = 1 - i;
+    flags[i] = 1;
+    while (flags[j] != 0) {
+        if (turn == j) {
+            flags[i] = 0;
+        while (turn == j);
+            flags[i] = 1;
+        }
+    }
+}
+
+void leave_critical_section(bool i) {
+    flags[i] = 0;
+    turn = 1 - i;
+}
+
+void *Square(void *ptr){
+    int i;
+    while(1){
+        enter_critical_section(0);
+        printf("\n");
+        for(i = 0; i < M; i++){
+            array[i] = array[i] * array[i];   
+        }
+        for(i = 0; i < M; i++){
+            printf("%d ", array[i]);
+        }
+        leave_critical_section(0);
+        sleep(1);
+    }
+    
+    
+}
+void *Root(void *ptr){
+    int i;
+    while(1){
+        enter_critical_section(1);
+        printf("\n");
+        for(i = 0; i < M; i++){
+            array[i] = sqrt(array[i]);   
+        }
+        for(i = 0; i < M; i++){
+            printf("%d ", array[i]);
+        }
+        leave_critical_section(1);
+        sleep(1);
+    }
+    
+}
+
+4. Program iz zadataka 2 nadopunite tako da implementirate međusobno isključivanje
+dviju niti pomoću Petersonova algoritma.
+
+#include<stdlib.h>
+#include<stdio.h>
+#include<pthread.h>
+#include<math.h>
+#include<unistd.h>
+#include<stdbool.h>
+
+void *Square(void *ptr);
+void *Root(void *ptr);
+
+int array[] = {1,4,9,4,0,25,16,36,49,9};
+int M = 10;
+bool flags[2];
+bool turn = 1;
+
+
+int main(){
+    pthread_t thread1, thread2;
+    
+    int ret1, ret2;
+
+    ret1 = pthread_create (&thread1, NULL, Square, (void*) array);
+    ret2 = pthread_create (&thread2, NULL, Root, (void*) array);
+    
+
+    pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
+    printf("Thread 1 vraca: %d\n",ret1);
+    printf("Thread 2 vraca: %d\n",ret2);
+    exit(0);
+}
+
+void enter_critical_section (bool i) {
+    bool j = 1 - i;
+    flags[i] = 1;
+    turn = j;
+    while (flags[j] != 0 && turn == j);
+}
+void leave_critical_section(bool i) {
+    flags[i] = 0;
+}
+
+void *Square(void *ptr){
+    int i;
+    while(1){
+        enter_critical_section(0);
+		printf("\n");
+        for(i = 0; i < M; i++){
+            array[i] = array[i] * array[i];   
+        }
+        for(i = 0; i < M; i++){
+            printf("%d ", array[i]);
+        }
+        leave_critical_section(0);
+        sleep(1);
+    }
+    
+    
+}
+void *Root(void *ptr){
+    int i;
+    while(1){
+        enter_critical_section(1);
+		printf("\n");
+        for(i = 0; i < M; i++){
+            array[i] = sqrt(array[i]);   
+        }
+        for(i = 0; i < M; i++){
+            printf("%d ", array[i]);
+        }
+        leave_critical_section(1);
+        sleep(1);
+    }  
+}
