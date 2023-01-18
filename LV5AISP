@@ -1,169 +1,109 @@
-#include<stdio.h>
-#include <stdlib.h>
-#include <time.h>
- 
-// function prototyping
-void heapify(int*,int, int);
-void heapsort(int*, int);
-void print_array(int*, int);
-
-int Left(int i){
-    return (2 * i + 1);
-}
-
-int Right(int i){
-    return (2 * i + 2);
-}
-
-void bubble_sort(int heap[], int n) {
-    int i,j;
-    for (i = 0; i < n - 1; i++) {
-        for (j = 0; j < n - i - 1; j++) {
-            if (heap[j] > heap[j + 1]) {
-                int temp = heap[j];
-                heap[j] = heap[j + 1];
-                heap[j + 1] = temp;
-            }
-        }
-    }
-}
-
-
-void merge(int arr[], int l, 
-           int m, int r)
+1.zadatak
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+ 
+namespace Baze_LV5_predlozak_1
 {
-    int i, j, k;
-    int n1 = m - l + 1;
-    int n2 = r - m;
-  
-    int L[n1], R[n2];
-  
-    for (i = 0; i < n1; i++)
-        L[i] = arr[l + i];
-    for (j = 0; j < n2; j++)
-        R[j] = arr[m + 1 + j];
-
-    i = 0; 
-    j = 0; 
-    k = l; 
-    while (i < n1 && j < n2) 
+    public partial class Form1 : Form
     {
-        if (L[i] <= R[j]) 
+        public Form1()
         {
-            arr[k] = L[i];
-            i++;
+            InitializeComponent();
         }
-        else 
+ 
+        private void btnSve_Click(object sender, EventArgs e)
         {
-            arr[k] = R[j];
-            j++;
+            // OVDJE SLIJEDI PRIMJER IZ PREDLOŠKA:
+            SqlConnection conn = new SqlConnection("Data Source=31.147.204.169;Initial " +
+            "Catalog = stuslu; User ID = student; Password = student");
+            conn.Open();
+            string statement = "SELECT * FROM student";
+            SqlDataAdapter dataAdapter = new SqlDataAdapter(statement, conn);
+            DataTable dt = new DataTable();
+            dataAdapter.Fill(dt);
+            dgvPodaci.DataSource = dt;
+            conn.Close();
         }
-        k++;
-    }
-  
-    while (i < n1) {
-        arr[k] = L[i];
-        i++;
-        k++;
-    }
-
-    while (j < n2) 
-    {
-        arr[k] = R[j];
-        j++;
-        k++;
+ 
+        private void btnTrazi_Click(object sender, EventArgs e)
+        {
+            // OVDJE PISATI KOD 1. ZADATKA IZ PREDLOŠKA:
+            SqlConnection conn = new SqlConnection("Data Source=31.147.204.169;Initial " +
+            "Catalog = stuslu; User ID = student; Password = student");
+            conn.Open();
+                string spoll;
+                if(rbM.Checked ==true) spoll = "M";
+                else spoll = "F";
+            string statement = "SELECT * FROM student WHERE ime like '" + txtIme.Text + "%' and prezime like '" + txtPrezime.Text + "%' and spol like '"+spoll+"'";
+            SqlDataAdapter dataAdapter = new SqlDataAdapter(statement, conn);
+            DataTable dt = new DataTable();
+            dataAdapter.Fill(dt);
+            dgvPodaci.DataSource = dt;
+            conn.Close();
+ 
+        }
     }
 }
-
-void mergeSort(int arr[], int l, int r)
+ 
+2.zadatak
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+ 
+namespace Baze_LV5_predlozak_2
 {
-    if (l < r) 
+    public partial class Form1 : Form
     {
-        int m = l + (r - l) / 2;
-
-        mergeSort(arr, l, m);
-        mergeSort(arr, m + 1, r);
-  
-        merge(arr, l, m, r);
-    }
-}
-
- 
-int main()
-{
-    time_t t1,t2;
-    srand(time(NULL));
-    int *array;
-    int n,i;
-    scanf("%d", &n);
-    
-    array = (int*)malloc(n * sizeof(int));
-    
-    for (i = 0; i<n;i++){
-        array[i] = rand()%100;
-    }
-
-    //print_array(array, n);
-    t1 = clock();
-    //heapsort(array, n);
-    //bubble_sort(array,n);
-    mergeSort(array, 0, n - 1);
-    t2 = clock();
-    //print_array(array, n);
-    printf("\nProteklo vrijeme: %f ms",(float)(t2-t1)/1000);
-    return 0;
-}
- 
-void heapsort(int* arr, int n)
-{
-    int i;
-    for (i = n / 2 - 1; i >= 0; i--)
-    {
-        heapify(arr, n, i);
-    }
- 
-    for (i = n - 1; i >= 0; i--)
-    {
-        int temp = arr[i];
-        arr[i] = arr[0];
-        arr[0] = temp;
- 
-        heapify(arr, i, 0);
-    }
-}
- 
-void heapify(int* arr, int n, int i)
-{
-    int largest = i;
- 
-    int left = Left(i);
-    int right  = Right(i);
- 
-    if (left < n && arr[left] > arr[largest])
-    {
-        largest = left;
-    }
- 
-    if (right < n && arr[right] > arr[largest])
-    {
-        largest = right;
-    }
- 
-    if (largest != i)
-    {
-        int temp = arr[i];
-        arr[i] = arr[largest];
-        arr[largest] = temp;
- 
-        heapify(arr, n, largest);
-    }
-}
- 
-void print_array(int* arr, int n)
-{
-    int i;
-    for (i = 0; i < n; i++)
-    {
-        printf("%d  ", arr[i]);
-    }
-}
+        public Form1()
+        {
+            InitializeComponent();
+        }
+ 
+        private void btnSve_Click(object sender, EventArgs e)
+        {
+            // OVDJE SLIJEDI ZADATAK IZ LV7 a):
+            SqlConnection conn = new SqlConnection("Data Source=31.147.204.169;Initial " +
+             "Catalog = student; User ID = student; Password = student");
+            conn.Open();
+            string statement = "SELECT * FROM studentiLV5 ORDER BY prezime";
+            SqlDataAdapter dataAdapter = new SqlDataAdapter(statement, conn);
+            DataTable dt = new DataTable();
+            dataAdapter.Fill(dt);
+            dgvPodaci.DataSource = dt;
+            conn.Close();
+ 
+ 
+        }
+ 
+        private void btnSpremi_Click(object sender, EventArgs e)
+        {
+            // OVDJE SLIJEDI ZADATAK IZ LV7 b) (i BONUS zadatak):
+            SqlConnection conn = new SqlConnection("Data Source=31.147.204.169;Initial " +
+            "Catalog = student; User ID = student; Password = student");
+            conn.Open();
+            string spoll;
+            if (rbM.Checked == true) spoll = "M";
+            else spoll = "F";
+            String statement = "INSERT INTO studentiLV5 VALUES('"+txtOIB.Text+ "', '" + txtIme.Text + "', '" + txtPrezime.Text + "', '" +spoll+ "','"+txtDatum.Value.Date.ToString("dd/MM/yyyy")+"')";
+            SqlCommand cmd = new SqlCommand(statement, conn);
+            cmd.ExecuteNonQuery();
+            //SqlDataAdapter dataAdapter = new SqlDataAdapter(statement, conn);
+            //DataTable dt = new DataTable();
+            //dataAdapter.Fill(dt);
+            //dgvPodaci.DataSource = dt;
+            conn.Close();
