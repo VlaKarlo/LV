@@ -1,0 +1,16 @@
+qlConnection conn = new SqlConnection("Data Source=31.147.204.169\\FERITMSSQL;Initial"
++ " Catalog = student; User ID = student; Password = student");
+conn.Open();
+string spol = null;
+if (rbM.Checked)
+spol = "M";
+else if (rbZ.Checked)
+spol = "F";
+
+string datetime = $"{txtDatum.Value.Date.Month}.{txtDatum.Value.Date.Day}.{txtDatum.Value.Date.Year}";
+string statement = $"INSERT INTO studentiLV5 " +
+$"VALUES('{txtOIB.Text}','{txtIme.Text}','{txtPrezime.Text}'," +
+$"'{spol}','{datetime}')";
+SqlCommand cmd = new SqlCommand(statement, conn);
+cmd.ExecuteNonQuery();
+conn.Close();
