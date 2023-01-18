@@ -1,0 +1,143 @@
+#include <windows.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+void ListFiles();
+void MyProcess();
+void MyThreads();
+
+DWORD WINAPI PrintBiggestElement(LPVOID lpParam);
+DWORD WINAPI PrintSmallestElement(LPVOID lpParam);
+DWORD WINAPI PrintAll(LPVOID lpParam);
+
+int arr[] = {6, 5, 2, 7, 3, 1, 0, 9, 8, 4};
+int arrLen = 10;
+
+int main() {
+	printf("Prvi:\n");
+	ListFiles();
+	printf("\nDrugi\n");
+	MyProcess();
+	printf("\nTreci\n");
+	MyThreads();
+}
+
+void ListFiles() {
+	HANDLE hFind;
+	WIN32_FIND_DATA findData;
+	WCHAR currentPath[MAX_PATH + 3]; // MAX_PATH + "\\*"
+
+	GetCurrentDirectory(MAX_PATH, currentPath);
+	printf("%ls\n", currentPath);
+
+	wcscat_s(currentPath, L"\\*");
+
+	hFind = FindFirstFile(currentPath, &findData);
+
+	if (hFind == INVALID_HANDLE_VALUE) {
+		printf("Error\n");
+		return;
+	}
+
+	while (FindNextFile(hFind, &findData)) {
+		printf("%ls\n", findData.cFileName);
+	}
+
+	FindClose(hFind);
+}
+
+void MyProcess() {
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+
+	ZeroMemory(&si, sizeof(si));
+	ZeroMemory(&pi, sizeof(pi));
+
+	if (!CreateProcess(L"C:\\Windows\\system32\\mspaint.exe",
+		NULL,
+		NULL,
+		NULL,
+		FALSE,
+		0,
+		NULL,
+		NULL,
+		&si,
+		&pi)) {
+		printf("Error process\n");
+		return;
+	}
+
+
+	WaitForSingleObject(pi.hProcess, INFINITE);
+
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
+}
+
+void MyThreads() {
+	HANDLE hThread1, hThread2, hThread3;
+	DWORD ThreadId1, ThreadId2, ThreadId3;
+
+	hThread1 = CreateThread(NULL, 0, PrintBiggestElement, NULL, 0, &ThreadId1);
+	if (hThread1 == NULL) {
+		printf("Error 1\n");
+		return;
+	}
+
+	hThread2 = CreateThread(NULL, 0, PrintSmallestElement, NULL, 0, &ThreadId2);
+	if (hThread2 == NULL) {
+		printf("Error 2\n");
+		return;
+	}
+
+	hThread3 = CreateThread(NULL, 0, PrintAll, NULL, 0, &ThreadId3);
+	if (hThread3 == NULL) {
+		printf("Error 3\n");
+		return;
+	}
+
+	WaitForSingleObject(hThread1, INFINITE);
+	WaitForSingleObject(hThread2, INFINITE);
+	WaitForSingleObject(hThread3, INFINITE);
+	CloseHandle(hThread1);
+	CloseHandle(hThread2);
+	CloseHandle(hThread3);
+
+	//HANDLE hthreads[] = { hThread1, hThread2, hThread3 };
+	//WaitForMultipleObjects(3, hThreads, FALSE, INFINITE);
+}
+
+DWORD WINAPI PrintBiggestElement(LPVOID lpParam) {
+	int temp = arr[0], i;
+
+	for (i = 1; i < arrLen; i++) {
+		if (arr[i] > temp)
+			temp = arr[i];
+	}
+
+	printf("Biggest item is: %d\n", temp);
+	return 0;
+}
+
+DWORD WINAPI PrintSmallestElement(LPVOID lpParam) {
+	int temp = arr[0], i;
+	for (i = 1; i < arrLen; i++) {
+		if (arr[i] < temp)
+			temp = arr[i];
+	}
+
+
+	printf("Smallest item is: %d\n", temp);
+	return 0;
+}
+
+DWORD WINAPI PrintAll(LPVOID lpParam){
+	int i;
+	printf("The whole array: ");
+	for (i = 0; i < arrLen; i++) {
+		printf("%d ", arr[i]);
+	}
+
+	printf("\n");
+	return 0;
+}
