@@ -1,0 +1,62 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Zad2;
+
+namespace Zad6
+{
+    public class QuoteFilter
+    {
+        public double GetVoteAverage(IList<Quote> quotes)
+        {
+            double voteSum = 0.0;
+            foreach (Quote quote in quotes)
+            {
+                voteSum += quote.Votes;
+            }
+            return voteSum / quotes.Count;
+        }
+
+        //TODO dijeljenje s 0
+
+        public IList<Quote> GetHighlyRated(IList<Quote> quotes)
+        {
+            IList<Quote> GetHighlyRated = new List<Quote>();
+
+            double averageVotes = GetVoteAverage(quotes);
+
+            foreach (Quote quote in quotes)
+            {
+                if (quote.Votes > averageVotes)
+                {
+                    GetHighlyRated.Add(quote);
+                }
+            }
+            return GetHighlyRated;
+        }
+
+        //TODO pronalazenje najboljeg slicno kao u zad 3
+
+        public string FindBestRated()
+        {
+
+
+            return
+        }
+
+        public IList<string> GetAuthorsBestRated(IList<Quote> quotes) 
+        {
+            IList<string> AuthorsBestRated;
+
+            foreach(Quote quote in quotes) 
+            {
+                string content = FindBestRated(quote.author);
+                AuthorsBestRated.Add(content);
+            }
+
+            return AuthorsBestRated;
+        }
+    }
+}
