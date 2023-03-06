@@ -1,0 +1,58 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Zad2
+{
+    public class Quote
+    {
+        public Author author { get; private set; }
+        public string Text { get; private set; }
+        public int Votes { get;  set; }
+
+        private IList<string> tags;
+        public Quote(string name, string surname, DateOnly dateOfBirth, string Text)
+        {
+            this.author = new Author(name, surname, dateOfBirth);
+            this.Text = Text;
+            this.Votes = 0;
+            this.tags = new List<string>();
+        }
+
+        public Quote( Author author, string Text)
+        {
+            this.author = author;
+            this.Text = Text;
+            this.Votes = 0;
+            this.tags = new List<string>();
+        }
+
+        public void Upvote()
+        {
+            if (Votes < 2147483647)
+                Votes++;
+        }
+        public void Downvote()
+        {
+            if (Votes>0)
+                Votes--;
+        }
+        public void AddTag(string tag)
+        {
+            tags.Add(tag.ToLower());
+        }
+        public IList<string> GetTags()
+        {
+            return tags;
+        }
+        public override string ToString()
+        {
+            return 
+            $"{string.Join(',',tags)}\n" +
+            $"{Text}\n" +
+            $"{Votes}\t\t{author}\n";
+        }
+    }
+}
