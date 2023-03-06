@@ -1,0 +1,37 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Zad2;
+
+namespace Zad5
+{
+    public class QuoteFilter
+    {
+        public double GetVoteAverage(IList<Quote> quotes)
+        {
+            double voteSum = 0.0;
+            foreach (Quote quote in quotes)
+            {
+                voteSum += quote.Votes;
+            }
+            return voteSum/quotes.Count;
+        }
+        public IList<Quote> GetHighlyRated(IList<Quote> quotes)
+        {
+            IList<Quote> GetHighlyRated = new List<Quote>();
+
+            double averageVotes = GetVoteAverage(quotes);
+
+            foreach (Quote quote in quotes)
+            {
+                if (quote.Votes > averageVotes)
+                {
+                    GetHighlyRated.Add(quote);
+                }
+            }
+            return GetHighlyRated;
+        }
+    }
+}
