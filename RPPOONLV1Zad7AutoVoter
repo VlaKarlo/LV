@@ -1,0 +1,55 @@
+using Zad2;
+
+/// <summary>
+/// Class used for automated voting on quotes. Serves as abot for
+/// testing and demonstration purposes. Utilises a random generator
+/// to decide how many and which type of votes (up / down) to cast.
+/// </summary>
+public class AutomaticVoter  //Automatic?
+{
+    private Random generator; 
+    private int votesToCast; 
+    public AutomaticVoter(Random generator)
+    {
+        this.generator= generator;
+    }
+
+    public double GetProbability(Quote quote)
+    {
+        double probability = 0.5; // 0.5 is the fixed threshold (baseline upvote probability).
+
+        if (quote.Text.Length > 140)
+            probability += 0.1;
+
+        if (quote.GetTags().Count < 3)
+            probability += quote.GetTags().Count * 0.1;
+        else
+            probability += 0.0;
+
+        if (probability > 1.0)
+            probability = 1.0;
+
+        return probability;
+    }
+
+    public void HandleQuote(Quote quote)
+    {
+        
+        double probability = GetProbability(quote);
+
+        int i = 0;
+
+        votesToCast = generator.Next(0, 101); 
+
+        for (i = 0; i < votesToCast; i++)
+        {
+            
+            if (this.generator.NextDouble() < probability)
+            {
+                quote.Upvote();
+            }
+            else
+                quote.Downvote();
+        }
+    }
+}
