@@ -1,0 +1,29 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Zad2;
+
+namespace Zad4
+{
+    public class RainbowWriter
+    {
+        public string colorChoice="";
+
+        public void WriteSingleQuote(Quote quote)
+        {
+            Console.WriteLine(quote.ToString());
+        }
+
+        public void WriteAllQuotes(List<Quote> quotes) 
+        {
+            foreach(Quote quote in quotes)
+            {
+                Console.WriteLine(quote.ToString());
+            }
+        }
+
+
+    }
+}
