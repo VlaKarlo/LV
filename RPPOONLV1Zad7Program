@@ -1,0 +1,23 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Zad2;
+
+namespace Zad7
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            Random random = new Random();
+            AutomaticVoter voter = new AutomaticVoter(random);
+            Quote velenQuote = new Quote("Prophet", "Velen", new DateOnly(981, 3, 3), "Not all who wander are lost");
+            
+            voter.HandleQuote(velenQuote);
+
+            Console.WriteLine(velenQuote.ToString());
+        }
+    }
+}
