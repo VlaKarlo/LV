@@ -1,0 +1,42 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Zad2
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            Author authorTerenas = new Author("King", "Terenas", new DateOnly(1240,2,2));
+            Console.WriteLine(authorTerenas.ToString());
+
+            Quote terenasQuote = new Quote(authorTerenas,"No king rules forever");
+            Console.WriteLine(terenasQuote.ToString());
+
+            Quote velenQuote = new Quote("Prophet","Velen",new DateOnly(981,3,3), "Not all who wander are lost");
+            Console.WriteLine(velenQuote.ToString());
+
+            velenQuote.AddTag("wander");
+            velenQuote.AddTag("solo");
+            velenQuote.AddTag("peace");
+            Console.WriteLine(velenQuote.ToString());
+
+            velenQuote.Downvote();
+            Console.WriteLine(velenQuote.ToString());
+
+            velenQuote.Votes = 2147483647;
+
+            velenQuote.Downvote();
+            Console.WriteLine(velenQuote.ToString());
+
+            velenQuote.Upvote();
+            Console.WriteLine(velenQuote.ToString());
+
+            velenQuote.Upvote();
+            Console.WriteLine(velenQuote.ToString());
+        }
+    }
+}
