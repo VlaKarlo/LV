@@ -1,0 +1,42 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Zad1
+{
+    public class Quote
+    {
+        public string name { get; private set; } 
+        public string surname { get; private set; } 
+        public DateOnly dateOfBirth { get; private set; }
+        public string content { get; private set; } 
+        public int votes { get; set; } 
+        private IList<string> tags;
+        public Quote(string name, string surname, DateOnly dateOfBirth, string content)
+        {
+            throw new NotImplementedException();
+        }
+        public void Upvote()
+        {
+            throw new NotImplementedException();
+        }
+        public void Downvote()
+        {
+            throw new NotImplementedException();
+        }
+        public void AddTag(string tag)
+        {
+            throw new NotImplementedException();
+        }
+        public IList<string> GetTags()
+        {
+            return tags.AsReadOnly();
+        }
+        public override string ToString()
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
