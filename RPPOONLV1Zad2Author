@@ -1,0 +1,27 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Zad2
+{
+    public class Author
+    {
+        public string name { get; private set; }
+        public string surname { get; private set; }
+        public DateOnly dateOfBirth { get; private set; }
+
+        public Author(string name, string surname, DateOnly dateOfBirth)
+        {
+            this.name = name;
+            this.surname = surname;
+            this.dateOfBirth = dateOfBirth;
+        }
+
+        public override string ToString()
+        {
+            return $"{name} {surname} born on {dateOfBirth}\n";
+        }
+    }
+}
